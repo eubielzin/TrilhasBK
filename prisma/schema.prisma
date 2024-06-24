@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model pergunta {
+  id               Int                @id @default(autoincrement())
+  tema_id          Int
+  texto            String             @db.Text
+  tema             tema               @relation(fields: [tema_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tema_id_fk")
+  pontuacao        pontuacao[]
+  resposta         resposta[]
+  usuario_resposta usuario_resposta[]
+
+  @@index([tema_id], map: "tema_id_fk")
+}
+
+model pontuacao {
+  id          Int      @id @default(autoincrement())
+  pergunta_id Int
+  pontuacao   Int
+  pergunta    pergunta @relation(fields: [pergunta_id], references: [id], onDelete: Cascade, map: "pontuacao_pergunta_id")
+
+  @@index([pergunta_id], map: "pontuacao_pergunta_id")
+}
+
+model resposta {
+  id               Int                @id @default(autoincrement())
+  pergunta_id      Int
+  texto            String             @db.Text
+  correta          Boolean
+  pergunta         pergunta           @relation(fields: [pergunta_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "pergunta_id_fk")
+  usuario_resposta usuario_resposta[]
+
+  @@index([pergunta_id], map: "pergunta_id_fk")
+}
+
+model tema {
+  id       Int        @id @default(autoincrement())
+  nome     String     @db.VarChar(250)
+  pergunta pergunta[]
+}
+
+model user {
+  id    String @id  @default(uuid())
+  email String @unique
+  nome  String
+  Senha String
+  tipo_usuario  String 
+}
+
+model usuario {
+  id                 Int                @id @default(autoincrement())
+  nome               String             @db.VarChar(250)
+  email              String             @db.VarChar(250)
+  senha              String             @db.VarChar(250)
+  estado             String?            @db.VarChar(250)
+  cidade             String?            @db.VarChar(250)
+  curso              String?            @db.VarChar(250)
+  instituicao_ensino String?            @db.VarChar(250)
+  tipo_usuario       String             @db.VarChar(250)
+  usuario_login      usuario_login[]
+  usuario_resposta   usuario_resposta[]
+}
+
+model usuario_login {
+  id          Int      @id @default(autoincrement())
+  usuario_id  Int
+  data_acesso DateTime @db.DateTime(0)
+  usuario     usuario  @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "usuario_id_fk")
+
+  @@index([usuario_id], map: "usuario_id_fk")
+}
+
+model usuario_resposta {
+  id            Int      @id @default(autoincrement())
+  usuario_id    Int
+  pergunta_id   Int
+  resposta_id   Int
+  data_resposta DateTime @db.DateTime(0)
+  pergunta      pergunta @relation(fields: [pergunta_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "usuario_resposta_pergunta_id_fk")
+  resposta      resposta @relation(fields: [resposta_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "usuario_resposta_resposta_id_fk")
+  usuario       usuario  @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "usuario_resposta_usuario_id_fk")
+
+  @@index([pergunta_id], map: "usuario_resposta_pergunta_id_fk")
+  @@index([resposta_id], map: "usuario_resposta_resposta_id_fk")
+  @@index([usuario_id], map: "usuario_resposta_usuario_id_fk")
+}
