@@ -13,7 +13,7 @@ userRouter.get('/user/:id', async (request, response) => {
     const { id } = request.params
 
     const user = await prisma.user.findUnique({
-        where: { id: parseInt(id, 10) }
+        where: { id: id }
     })
 
     if (!user) {
