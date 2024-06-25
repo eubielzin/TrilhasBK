@@ -3,7 +3,7 @@ import { prisma } from '../../lib/prisma'
 
 export const userRouter= Router()
 
-userRouter.get('/user', async (request , response) => {
+userRouter.get('/findAll', async (request , response) => {
     const user = await prisma.user.findMany()
 
     return response.send({ user })
