@@ -12,9 +12,9 @@ userRouter.get('/findAll', async (request , response) => {
 // userRouter.get('/user/:id', async (request, response) => {
 //     const { id } = request.params
 
-    const user = await prisma.user.findUnique({
-        where: { id: parseInt(id, 10) }
-    })
+    //const user = await prisma.user.findUnique({
+      //  where: { id: parseInt(id, 10) }
+    //})
 
 //     if (!user) {
 //         return response.status(404).send({ message: 'User not found' })
